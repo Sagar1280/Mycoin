@@ -26,6 +26,7 @@ int main() {
         cout << "Current Hash: " << block.hash << "\n";
         cout << "Timestamp: " << block.timestamp << "\n";
         cout << "-------------------------\n";
+        cout << endl;
     }
 
     return 0;
