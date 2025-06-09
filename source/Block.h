@@ -2,18 +2,32 @@
 #define BLOCK_H
 
 #include <string>
+#include <ctime>
+#include <sstream>
+#include "sha256.h"
+#include <iomanip>
+
+using namespace std;
 
 class Block {
 public:
     int index;
-    std::string timestamp;
-    std::string data;
-    std::string previousHash;
-    int nonce;
-    std::string hash;
+    string data;
+    string previousHash;
+    string hash;
+    time_t timestamp;
 
-    Block(int idx, const std::string& time, const std::string& dat, const std::string& prevHash);
-    std::string calculateHash() const;
+    Block(int idx, const string& data, const string& prevHash) 
+        : index(idx), data(data), previousHash(prevHash), timestamp(time(nullptr)) {
+        hash = calculateHash();
+    }
+
+    string calculateHash() const {
+        stringstream ss;
+        ss << index << timestamp << data << previousHash;
+
+        return sha256(ss.str());
+    }
 };
 
 #endif
