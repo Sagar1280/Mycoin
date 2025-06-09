@@ -17,7 +17,7 @@ public:
     string hash;
     time_t timestamp;
 
-    Block(int idx, const string& data, const string& prevHash) 
+    Block(int idx, const string& data, const string& prevHash)
         : index(idx), data(data), previousHash(prevHash), timestamp(time(nullptr)) {
         hash = calculateHash();
     }
@@ -25,7 +25,6 @@ public:
     string calculateHash() const {
         stringstream ss;
         ss << index << timestamp << data << previousHash;
-
         return sha256(ss.str());
     }
 };

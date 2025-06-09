@@ -20,7 +20,6 @@ int main() {
 
     // Print all blocks
     for (const auto& block : blockchain) {
-        cout << "Block Hash: " << block.calculateHash() << endl;
         cout << "Block #" << block.index << "\n";
         cout << "Data: " << block.data << "\n";
         cout << "Previous Hash: " << block.previousHash << "\n";

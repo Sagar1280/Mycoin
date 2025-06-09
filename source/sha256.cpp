@@ -3,12 +3,8 @@
 #include <iomanip>
 #include <cstring>
 
-// Your SHA256 function implementation here
-// For example, your custom SHA256 function converting input to hash string
-
-// (This is just a placeholder — make sure to use your actual SHA256 code)
+// Dummy placeholder SHA256 function - replace this with actual implementation
 string sha256(const string& input) {
-    // Example dummy hash (replace with actual implementation)
-    string dummyHash = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
-    return dummyHash;
+    // Example dummy hash (replace with your real SHA256 code)
+    return "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
 }
