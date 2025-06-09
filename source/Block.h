@@ -17,8 +17,8 @@ public:
     string hash;
     time_t timestamp;
 
-    Block(int idx, const string& data, const string& prevHash)
-        : index(idx), data(data), previousHash(prevHash), timestamp(time(nullptr)) {
+    Block(int index, const string& data, const string& prevHash)
+        : index(index), data(data), previousHash(prevHash), timestamp(time(nullptr)) {
         hash = calculateHash();
     }
 
