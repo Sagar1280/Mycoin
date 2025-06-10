@@ -30,8 +30,13 @@ The SHA-256 hashing is handled using a custom `sha256.cpp` implementation (curre
 - 📌 Commit history cleaned and organized.
 
 ---
+## 📅 2025-06-10
+- 🔐 Replaced dummy SHA-256 implementation with a real SHA-256 algorithm in sha256.cpp, including <cstdint> for fixed-width       integer types.
+- ⚙️ Implemented proof-of-work mechanism with difficulty and nonce in Block::mineBlock to ensure hashes meet the required leading zeros.
+- 🛠️ Fixed mineBlock redefinition error by removing redundant implementation from Block.cpp and keeping it inline in Block.h (or moved to Block.cpp with declaration in Block.h).
+- 📤 Pushed updated files (main.cpp, Block.h, Block.cpp, sha256.h, sha256.cpp) to the main branch of the Mycoin GitHub repository under the source directory.
+- ✅ Verified blockchain functionality with block mining and chain validation.
 
 ## 🔜 To Do
-- Replace dummy SHA256 function with a real hash implementation.
 - Improve timestamp format (convert to readable string).
 - Add file I/O support or JSON export.
