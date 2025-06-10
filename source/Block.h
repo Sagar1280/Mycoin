@@ -6,6 +6,7 @@
 #include <sstream>
 #include "sha256.h"
 #include <iomanip>
+#include <iostream>
 
 using namespace std;
 
@@ -16,17 +17,22 @@ public:
     string previousHash;
     string hash;
     time_t timestamp;
+    int nonce;
 
+    // Constructor: sets everything except hash/nonce
     Block(int index, const string& data, const string& prevHash)
-        : index(index), data(data), previousHash(prevHash), timestamp(time(nullptr)) {
-        hash = calculateHash();
-    }
+        : index(index), data(data), previousHash(prevHash),
+          timestamp(time(nullptr)), nonce(0), hash("") {}
 
+    // Calculate SHA256 over all fields including nonce
     string calculateHash() const {
         stringstream ss;
-        ss << index << timestamp << data << previousHash;
+        ss << index << timestamp << data << previousHash << nonce;
         return sha256(ss.str());
     }
+
+    // Declare mineBlock (no implementation here)
+    void mineBlock(int difficulty);
 };
 
 #endif
