@@ -63,8 +63,9 @@ int main() {
         cout << "Previous Hash: " << block.previousHash << "\n";
         cout << "Current Hash: " << block.hash << "\n";
         cout << "Nonce: " << block.nonce << "\n";
-        cout << "Timestamp: " << block.timestamp << "\n";
+        cout << "Timestamp: " << ctime(&block.timestamp);
         cout << "-------------------------\n";
+        cout << endl;
     }
 
     // --- Validate Chain ---
