@@ -4,34 +4,36 @@
 #include <string>
 #include <ctime>
 #include <sstream>
-#include "sha256.h"
-#include <iomanip>
 #include <iostream>
+#include "sha256.h"
 
 using namespace std;
 
 class Block {
 public:
     int index;
-    string data;
+    string sender;
+    string receiver;
+    double amount;
     string previousHash;
     string hash;
     time_t timestamp;
+    string readableTimestamp;
     int nonce;
 
-    // Constructor: sets everything except hash/nonce
-    Block(int index, const string& data, const string& prevHash)
-        : index(index), data(data), previousHash(prevHash),
-          timestamp(time(nullptr)), nonce(0), hash("") {}
+    Block(int index, const string& sender, const string& receiver, double amount, const string& prevHash)
+        : index(index), sender(sender), receiver(receiver), amount(amount), previousHash(prevHash),
+          timestamp(time(nullptr)), nonce(0), hash("") {
+        readableTimestamp = string(ctime(&timestamp));
+        readableTimestamp.pop_back();  // remove newline
+    }
 
-    // Calculate SHA256 over all fields including nonce
     string calculateHash() const {
         stringstream ss;
-        ss << index << timestamp << data << previousHash << nonce;
+        ss << index << timestamp << sender << receiver << amount << previousHash << nonce;
         return sha256(ss.str());
     }
 
-    // Declare mineBlock (no implementation here)
     void mineBlock(int difficulty);
 };
 
