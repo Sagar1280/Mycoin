@@ -5,32 +5,35 @@
 #include <ctime>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include "sha256.h"
+#include "Transaction.h"
 
 using namespace std;
 
 class Block {
 public:
     int index;
-    string sender;
-    string receiver;
-    double amount;
+    vector<Transaction> transactions;
     string previousHash;
     string hash;
     time_t timestamp;
     string readableTimestamp;
     int nonce;
 
-    Block(int index, const string& sender, const string& receiver, double amount, const string& prevHash)
-        : index(index), sender(sender), receiver(receiver), amount(amount), previousHash(prevHash),
+    Block(int idx, const vector<Transaction>& txs, const string& prevHash)
+        : index(idx), transactions(txs), previousHash(prevHash),
           timestamp(time(nullptr)), nonce(0), hash("") {
         readableTimestamp = string(ctime(&timestamp));
-        readableTimestamp.pop_back();  // remove newline
+        readableTimestamp.pop_back();
     }
 
     string calculateHash() const {
         stringstream ss;
-        ss << index << timestamp << sender << receiver << amount << previousHash << nonce;
+        ss << index << timestamp << previousHash << nonce;
+        for (const auto& tx : transactions) {
+            ss << tx.sender << tx.receiver << tx.amount;
+        }
         return sha256(ss.str());
     }
 

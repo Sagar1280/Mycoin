@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include "Block.h"
+#include "Transaction.h"
 
 using namespace std;
 
-// Simple function to verify the integrity of the entire blockchain
 bool isChainValid(const vector<Block>& chain, int difficulty) {
     for (size_t i = 1; i < chain.size(); ++i) {
         const Block& current = chain[i];
@@ -17,7 +17,8 @@ bool isChainValid(const vector<Block>& chain, int difficulty) {
         }
 
         if (current.previousHash != previous.hash) {
-            cout << "Broken chain between blocks " << previous.index << " and " << current.index << "\n";
+            cout << "Broken chain between blocks "
+                 << previous.index << " and " << current.index << "\n";
             return false;
         }
 
@@ -32,76 +33,52 @@ bool isChainValid(const vector<Block>& chain, int difficulty) {
 
 int main() {
     vector<Block> blockchain;
+    vector<Transaction> transactionPool;
+    map<string, double> walletBalances;
     int difficulty = 4;
-    unordered_map<string, double> walletBalances;
 
-    // Initial balances
-    walletBalances["Alice"] = 100.0;
-    walletBalances["Bob"] = 50.0;
-    walletBalances["Charlie"] = 0.0;
-
-    // --- Genesis Block ---
     cout << "Mining genesis block...\n";
-    Block genesisBlock(0, "System", "Alice", 0, "0");
+    vector<Transaction> genesisTxs = { Transaction("system", "Alice", 100.0) };
+    walletBalances["Alice"] = 100.0;
+    Block genesisBlock(0, genesisTxs, "0");
     genesisBlock.mineBlock(difficulty);
     blockchain.push_back(genesisBlock);
 
-    // --- Block 1: Alice -> Bob ---
-    cout << "\nMining block 1...\n";
-    string sender1 = "Alice";
-    string receiver1 = "Bob";
-    double amount1 = 30.0;
+    transactionPool.push_back(Transaction("Alice", "Bob", 20.0));
+    transactionPool.push_back(Transaction("Bob", "Charlie", 15.0));
 
-    if (walletBalances[sender1] >= amount1) {
-        Block block1(1, sender1, receiver1, amount1, blockchain.back().hash);
-        block1.mineBlock(difficulty);
-        blockchain.push_back(block1);
-        walletBalances[sender1] -= amount1;
-        walletBalances[receiver1] += amount1;
-    } else {
-        cout << "❌ Transaction failed: insufficient balance\n";
+    cout << "\nMining block with transactions from pool...\n";
+    Block txBlock(1, transactionPool, blockchain.back().hash);
+    txBlock.mineBlock(difficulty);
+    blockchain.push_back(txBlock);
+
+    for (const auto& tx : transactionPool) {
+        if (walletBalances[tx.sender] >= tx.amount) {
+            walletBalances[tx.sender] -= tx.amount;
+            walletBalances[tx.receiver] += tx.amount;
+        } else {
+            cout << "❌ Transaction failed (insufficient funds): " << tx.sender << " -> " << tx.receiver << "\n";
+        }
     }
+    transactionPool.clear();
 
-    // --- Block 2: Bob -> Charlie ---
-    cout << "\nMining block 2...\n";
-    string sender2 = "Bob";
-    string receiver2 = "Charlie";
-    double amount2 = 25.0;
-
-    if (walletBalances[sender2] >= amount2) {
-        Block block2(2, sender2, receiver2, amount2, blockchain.back().hash);
-        block2.mineBlock(difficulty);
-        blockchain.push_back(block2);
-        walletBalances[sender2] -= amount2;
-        walletBalances[receiver2] += amount2;
-    } else {
-        cout << "❌ Transaction failed: insufficient balance\n";
-    }
-
-    // --- Print Blockchain ---
     cout << "\n=== Blockchain ===\n";
     for (const auto& block : blockchain) {
         cout << "Block #" << block.index << "\n";
-        cout << "Sender: " << block.sender << "\n";
-        cout << "Receiver: " << block.receiver << "\n";
-        cout << "Amount: " << block.amount << "\n";
         cout << "Timestamp: " << block.readableTimestamp << "\n";
         cout << "Previous Hash: " << block.previousHash << "\n";
         cout << "Hash: " << block.hash << "\n";
         cout << "Nonce: " << block.nonce << "\n";
+        cout << "Transactions:\n";
+        for (const auto& tx : block.transactions) {
+            cout << "  - " << tx.sender << " -> " << tx.receiver << " : " << tx.amount << "\n";
+        }
         cout << "-------------------------\n\n";
     }
 
-    // --- Validate Chain ---
     cout << "\nValidating blockchain... ";
     bool valid = isChainValid(blockchain, difficulty);
     cout << (valid ? "All good! Chain is valid.\n" : "Chain is invalid!\n");
-
-    // --- Print Final Balances ---
-    cout << "\n=== Final Wallet Balances ===\n";
-    for (const auto& [wallet, balance] : walletBalances) {
-        cout << wallet << ": " << balance << "\n";
-    }
 
     return 0;
 }
